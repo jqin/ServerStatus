@@ -4,7 +4,13 @@ $name = htmlspecialchars($_GET['name']);
 $host = htmlspecialchars($_GET['host']);
 header( "refresh:600;url=./outages.php" );
 include('includes/config.php');
-$outages = json_decode(file_get_contents("cache/outages.db"), true);
+if(file_exists("./cache/outages.db")){
+	$outages = json_decode(file_get_contents("./cache/outages.db"), true);
+}
+else{
+	$outages = array();
+	$outages[] = array('down' => 0, 'upagain' => 1, 'name' => 'Server Name', 'host' => 'Server Host', 'type' => 'Server Type', 'uptime' => '1 Day');
+}
 $sTable ='
 			<thead>
 			<tr>
