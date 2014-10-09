@@ -1,7 +1,174 @@
 <?php
-// pull
-include('../includes/config.php');
+// ================================================================================================================
+//													ServerStatus Pull
+// ================================================================================================================
+//
+//	by: Cameron Munroe ~ Mun
+// 	Website: https://www.qwdsa.com/converse/threads/serverstatus-rebuild.43/ 
+// 	rewritten from the original server status script by Bluevm and @mojeda
+//	Ver. 1.0a
+//
+//
+// 	https://raw.githubusercontent.com/Munroenet/ServerStatus/master/uptime.php
+//
+// ================================================================================================================
+//													Get Config
+// ================================================================================================================
 
+include('../includes/config.php');
+$time = time();
+
+// ================================================================================================================
+//													Sanity Checks
+// ================================================================================================================
+if(!isset($_GET['url']) || !is_numeric($_GET['url']) || !isset($servers[$_GET['url']])){
+	exit("404 Error, that couldn't be found");
+}
+
+// ================================================================================================================
+//													Core!
+// ================================================================================================================
+elseif(is_numeric($_GET['url'])){
+	$id = $_GET['url']; //make nice IDs
+	$data = get_cache($id, $cache, $time);
+	if($data['uptime'] == null) {
+		$data = get_data($servers[$id]['url']);
+		$data['time'] = $time;
+		cache($id, $data);
+	}
+	if(!isset($data['uptime'])) {
+		// The server is down
+		downfile($id, $servers[$id], $failafter, $mailme, $emailto, $emailfrom, $time);
+		downinfo();
+	}
+	else {
+		// The server is up
+		checkdown($id, $mailme, $emailto, $emailfrom, $time, $failafter, $servers[$id]);
+		checkload($data['load'], $emailto, $emailfrom, $servers[$id], $id, $mailme);
+		echo json_encode($data);
+	}
+}
+
+// ================================================================================================================
+//														Functions
+// ================================================================================================================
+
+
+
+// This function checks if your load is to high and emails you
+function checkload($load, $emailto, $emailfrom, $server, $id, $mailme) {
+	$path = '../cache/' . $id . '.load';
+	if(isset($load) && $mailme == 1 && isset($servers['maxload'])){
+		if($maxload <= $load && !file_exists($path)) {
+			$message = "Node: " . $server['name']  . " on host " . $server['host'] . " has an alarming load of " . $load . " at " . date("H:i | d M Y", $time);
+			$message = wordwrap($message, 70, "\r\n");
+			mail($emailto, "ServerStatus: " . $server['name'] . " has an alarming load!", $message, 'From: ServerStatus <' . $emailfrom . '>' . "\r\n");
+			file_put_contents($path, $load);
+		}
+		elseif($maxload > $load && file_exists($path)) {
+			unlink($path);
+			$message = "Node: " . $server['name']  . " on host " . $server['host'] . " has returned to a normal load at " . date("H:i | d M Y", $time);
+			$message = wordwrap($message, 70, "\r\n");
+			mail($emailto, "ServerStatus: " . $server['name'] . " load has returned to normal!", $message, 'From: ServerStatus <' . $emailfrom . '>' . "\r\n");
+		}
+	}
+}
+
+// This file checks if the server was down!
+function checkdown($id, $mailme, $emailto, $emailfrom, $time, $failafter, $server) {
+	$path = '../cache/' . $id . '.down';
+	if (file_exists($path)) {
+		$data = json_decode(file_get_contents($path), true);
+		unlink($path);
+		$totalfail = $time - $data['time'];
+		if($totalfail > $failafter) {
+			$failures = array();
+			$failures[] = array('down' => $data['time'], 'upagain' => $time, 'name' => $server['name'], 'host' => $server['host'], 'type' => $server['type'], 'uptime' => $data['uptime']);
+			$oldfails = json_decode(file_get_contents("../cache/outages.db"), true);
+			if($mailme == 1) {
+				$message = "Node: " . $server['name']  . " on host " . $server['host'] . " is up as of: " .  date("H:i | d M Y", $time) . ". It was down for: " . number_format((($time - $data['time']) / 60), 0, '.', '') . " Minutes.";
+				$message = wordwrap($message, 70, "\r\n");
+				mail($emailto, "ServerStatus: " . $server['name'] . " is up!", $message, 'From: ServerStatus <' . $emailfrom . '>' . "\r\n");
+				}
+			foreach($oldfails as $fail) {
+				$failures[] = $fail;
+			}
+			file_put_contents("../cache/outages.db", json_encode($failures));
+		}
+	}
+	
+}
+
+// This function creates .down files when a server goes offline and manages 
+// email alerts
+function downfile($id, $server, $failafter, $mailme, $emailto, $emailfrom, $time) {
+	$path = '../cache/' . $id . '.down';
+	if (!file_exists($path)) {
+		file_put_contents($path, json_encode(array('time'=> $time, 'name' => $server['name'])));
+	}
+	else {
+		$down = json_decode(file_get_contents($path), true);
+		if(($down['time'] + $failafter) <= $time && !isset($down['mailed']) && $mailme == 1  && $down['time'] != null) {
+			$message = "Node: " . $server['name']  . " on host " . $server['host'] . " is down as of: " .  date("H:i | d M Y", $down['time']) . ". It has currently been down for " . $failafter . " seconds.";
+			$message = wordwrap($message, 70, "\r\n");
+			mail($emailto, "ServerStatus: " . $server['name'] . " is down!", $message, 'From: ServerStatus <' . $emailfrom . '>' . "\r\n");
+			$down['mailed'] = 'yes';
+			file_put_contents($path, json_encode($down));
+		}
+	}
+}
+
+// This function is for posting the down array info
+function downinfo() {
+	$array = array();
+	$array['uptime'] = '
+	<div class="progress">
+		<div class="bar bar-danger" style="width: 100%;"><small>Down</small></div>
+	</div>
+	';
+	$array['load'] = '
+	<div class="progress">
+		<div class="bar bar-danger" style="width: 100%;"><small>Down</small></div>
+	</div>
+	';
+	$array['online'] = '
+	<div class="progress">
+		<div class="bar bar-danger" style="width: 100%;"><small>Down</small></div>
+	</div>
+	';
+	echo json_encode($array);
+}
+
+// This gets data from our cache 
+function get_cache($id, $cache, $time){
+	$path = '../cache/' . $id . '.raw';
+	if(!file_exists($path)) {
+		return;
+	}
+	else {
+		$data = json_decode(file_get_contents($path), true);
+	}
+	if(($data['time'] + $cache) < $time){
+		unlink($path);
+		return;
+	}
+	else {
+		return $data;
+	}
+}
+
+// This puts data into a cache
+function cache($id, $data) {
+	$path = '../cache/' . $id . '.raw';
+	if(isset($data['uptime'])) {
+		file_put_contents($path, json_encode($data));
+	}
+	elseif(file_exists($path)) {
+		unlink($path);
+	}
+}
+
+// This pulls data from the backend servers!
 function get_data($url) {
 	$opts = array(
 	  'http'=>array(
@@ -13,79 +180,10 @@ function get_data($url) {
 	  )
 	);
 	$context = stream_context_create($opts);
-	$data = file_get_contents($url, false, $context);
+	$data = json_decode(file_get_contents($url, false, $context),true);
+	if(isset($data['load'])){
+		$data["load"] = number_format($data["load"], 2);
+	}
   return $data;
 }
-if(is_numeric($_GET['url'])){
-	$time = time();
-	$old_cache = json_decode(file_get_contents("../cache/" . $_GET['url']  . ".raw"), true);
-	$cachetime = $old_cache['time'] + $cache;
-	if($cachetime <= $time) {
-		$result = $servers[$_GET['url']];
-		if($result == null) { exit('WOW THERE, THIS ID DOES NOT EXIST');}
-		$data = json_decode(get_data($result['url']), true);
-		$data["time"] = $time;
-		if($data['uptime'] != null){file_put_contents("../cache/" . $_GET['url'] . ".raw", json_encode($data));}
-		unset($data['time']);
-	} else {
-	unset($old_cache['time']);
-	$data = $old_cache;
-	}
-	
-	if(($data == NULL) || ($data === false)){
-		$array = array();
-		$array['uptime'] = '
-		<div class="progress">
-			<div class="bar bar-danger" style="width: 100%;"><small>Down</small></div>
-		</div>
-		';
-		$array['load'] = '
-		<div class="progress">
-			<div class="bar bar-danger" style="width: 100%;"><small>Down</small></div>
-		</div>
-		';
-		$array['online'] = '
-		<div class="progress">
-			<div class="bar bar-danger" style="width: 100%;"><small>Down</small></div>
-		</div>
-		';
-		echo json_encode($array);
-		if (!file_exists("../cache/" . $_GET['url'] . ".down")) {
-			file_put_contents("../cache/" . $_GET['url'] . ".down", json_encode(array('time'=>$time, 'uptime'=>$old_cache['uptime'])));
-		} else {
-			$down = json_decode(file_get_contents("../cache/" . $_GET['url'] . ".down"), true);
-			$dead = $down['time'] + $failafter;
-				if($dead <= $time && !isset($down['mailed']) && $mailme == 1) {
-					$message = "Node: " . $servers[$_GET['url']]['name']  . " on host " . $servers[$_GET['url']]['host'] . " is down as of: " .  date("H:i | d M Y", $down['time']) . ". It has currently been down for " . $failafter . " seconds.";
-					$message = wordwrap($message, 70, "\r\n");
-					mail($emailto, "ServerStatus: " . $servers[$_GET['url']]['name'] . " is down!", $message, 'From: ServerStatus <' . $emailfrom . '>' . "\r\n");
-					$down['mailed'] = 'yes';
-					file_put_contents("../cache/" . $_GET['url'] . ".down", json_encode($down));
-				}
-		}
-	} else {
-		$data["load"] = number_format($data["load"], 2);
-		echo json_encode($data);
-		if (file_exists("../cache/" . $_GET['url'] . ".down")) {
-			$lastfail = json_decode(file_get_contents("../cache/" . $_GET['url'] . ".down"), true);
-			unlink("../cache/" . $_GET['url'] . ".down");
-			$totalfail = $time - $lastfail['time'];
-			if($totalfail > $failafter) {
-				$failures = array();
-				$failures[] = array('down' => $lastfail['time'], 'upagain' => $time, 'name' => $servers[$_GET['url']]['name'], 'host' => $servers[$_GET['url']]['host'], 'type' => $servers[$_GET['url']]['type'], 'uptime' => $lastfail['uptime']);
-				$oldfails = json_decode(file_get_contents("../cache/outages.db"), true);
-				if($mailme == 1) {
-					$message = "Node: " . $servers[$_GET['url']]['name']  . " on host " . $servers[$_GET['url']]['host'] . " is up as of: " .  date("H:i | d M Y", $time) . ". It was down for: " . number_format((($time - $lastfail['time']) / 60), 0, '.', '') . " Minutes.";
-					$message = wordwrap($message, 70, "\r\n");
-					mail($emailto, "ServerStatus: " . $servers[$_GET['url']]['name'] . " is up!", $message, 'From: ServerStatus <' . $emailfrom . '>' . "\r\n");
-					}
-				foreach($oldfails as $fail) {
-					$failures[] = $fail;
-				}
-				file_put_contents("../cache/outages.db", json_encode($failures));
-			}
-			
-		}
-		
-	}
-}
+?>
