@@ -6,7 +6,7 @@
 //	by: Cameron Munroe ~ Mun
 // 	Website: https://www.qwdsa.com/converse/threads/serverstatus-rebuild.43/ 
 // 	rewritten from the original server status script by Bluevm and @mojeda
-//	Ver. 1.1
+//	Ver. 1.1a
 //
 //
 // 	https://raw.githubusercontent.com/Munroenet/ServerStatus/master/uptime.php
@@ -44,7 +44,7 @@ elseif(is_numeric($_GET['url'])){
 	else {
 		// The server is up
 		checkdown($id, $mailme, $emailto, $emailfrom, $time, $failafter, $servers[$id]);
-		checkload($data['load'], $emailto, $emailfrom, $servers[$id], $id, $mailme);
+		checkload($data['load'], $emailto, $emailfrom, $servers[$id], $id, $mailme, $time);
 		echo json_encode($data);
 	}
 }
@@ -56,7 +56,7 @@ elseif(is_numeric($_GET['url'])){
 
 
 // This function checks if your load is to high and emails you
-function checkload($load, $emailto, $emailfrom, $server, $id, $mailme) {
+function checkload($load, $emailto, $emailfrom, $server, $id, $mailme, $time) {
 	$path = '../cache/' . $id . '.load';
 	if(isset($load) && $mailme == 1 && isset($server['maxload'])){
 		if($server['maxload'] <= $load && !file_exists($path)) {
