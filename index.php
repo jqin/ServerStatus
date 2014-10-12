@@ -1,7 +1,12 @@
 <?php
 // main page
 $title = 'Live';
-include('./includes/config.php');
+if (file_exists('./include/config.php') {
+	include('./includes/config.php');
+}
+else {
+	exit("You need to create include/config.php");
+}
 global $sJavascript, $sTable;
 
 	$sJavascript .= '<script type="text/javascript">
