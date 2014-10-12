@@ -6,7 +6,7 @@
 //	by: Cameron Munroe ~ Mun
 // 	Website: https://www.qwdsa.com/converse/threads/serverstatus-rebuild.43/ 
 // 	rewritten from the original server status script by Bluevm and @mojeda
-//	Ver. 1.1a
+//	Ver. 1.1b
 //
 //
 // 	https://raw.githubusercontent.com/Munroenet/ServerStatus/master/uptime.php
@@ -63,13 +63,16 @@ function checkload($load, $emailto, $emailfrom, $server, $id, $mailme, $time) {
 			$message = "Node: " . $server['name']  . " on host " . $server['host'] . " has an alarming load of " . $load . " at " . date("H:i | d M Y", $time);
 			$message = wordwrap($message, 70, "\r\n");
 			mail($emailto, "ServerStatus: " . $server['name'] . " has an alarming load!", $message, 'From: ServerStatus <' . $emailfrom . '>' . "\r\n");
-			file_put_contents($path, $load);
+			file_put_contents($path, json_encode(array('load' => $load, 'time' => $time, 'name' => $server['name'])));
 		}
 		elseif($server['maxload'] > $load && file_exists($path)) {
+			$data = json_decode(file_get_contents($path),true);
 			unlink($path);
-			$message = "Node: " . $server['name']  . " on host " . $server['host'] . " has returned to a normal load at " . date("H:i | d M Y", $time);
-			$message = wordwrap($message, 70, "\r\n");
-			mail($emailto, "ServerStatus: " . $server['name'] . " load has returned to normal!", $message, 'From: ServerStatus <' . $emailfrom . '>' . "\r\n");
+			if($data['name'] == $server['name']) {
+				$message = "Node: " . $server['name']  . " on host " . $server['host'] . " has returned to a normal load at " . date("H:i | d M Y", $time) . ". It was in a critical load for " . number_format((($time - $data['time']) / 60), 0, '.', '') . " Minutes." ;
+				$message = wordwrap($message, 70, "\r\n");
+				mail($emailto, "ServerStatus: " . $server['name'] . " load has returned to normal!", $message, 'From: ServerStatus <' . $emailfrom . '>' . "\r\n");
+			}
 		}
 	}
 }
@@ -81,7 +84,7 @@ function checkdown($id, $mailme, $emailto, $emailfrom, $time, $failafter, $serve
 		$data = json_decode(file_get_contents($path), true);
 		unlink($path);
 		$totalfail = $time - $data['time'];
-		if($totalfail > $failafter) {
+		if($totalfail > $failafter && $data['name'] == $server['name']) {
 			$failures = array();
 			$failures[] = array('down' => $data['time'], 'upagain' => $time, 'name' => $server['name'], 'host' => $server['host'], 'type' => $server['type'], 'uptime' => $data['uptime']);
 			$oldfails = json_decode(file_get_contents("../cache/outages.db"), true);
