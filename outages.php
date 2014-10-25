@@ -3,11 +3,11 @@ $title = 'Outages';
 $name = htmlspecialchars($_GET['name']);
 $host = htmlspecialchars($_GET['host']);
 header( "refresh:600;url=./outages.php" );
-if(file_exists('./include/config.php')) {
+if(file_exists('./includes/config.php')) {
 	include('./includes/config.php');
 }
 else {
-	exit("You need to create include/config.php");
+	exit("You need to create includes/config.php");
 }	
 if(file_exists("./cache/outages.db")){
 	$outages = json_decode(file_get_contents("./cache/outages.db"), true);
