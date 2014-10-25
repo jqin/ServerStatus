@@ -1,7 +1,7 @@
 <?php
 // main page
 $title = 'Live';
-if (file_exists('./include/config.php') {
+if (file_exists('./include/config.php')) {
 	include('./includes/config.php');
 }
 else {

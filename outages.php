@@ -3,7 +3,7 @@ $title = 'Outages';
 $name = htmlspecialchars($_GET['name']);
 $host = htmlspecialchars($_GET['host']);
 header( "refresh:600;url=./outages.php" );
-if(file_exists('./include/config.php');
+if(file_exists('./include/config.php')) {
 	include('./includes/config.php');
 }
 else {
