@@ -96,7 +96,7 @@ echo json_encode($post); // Time to show the world what we are made of!
 //                                                                  Functions
 // ========================================================================================================================================
 
-
+// This function determines what color bars we should be using!
 function levels($perc, $dl, $wl){
     // make nice green bars
     if($perc < 30) {
@@ -104,14 +104,14 @@ function levels($perc, $dl, $wl){
     } else {
         $width = $perc;
     }
-    if($perc > $wl) { 
-        $return = '<div class="progress progress-striped active"><div class="bar bar-success" style="width: ' . $width . '%;">' . $perc . '%</div</div>';
+	if($perc < $dl){
+        $return = '<div class="progress progress-striped active"><div class="bar bar-danger" style="width: ' . $width . '%;">' . $perc . '%</div></div>';
     }
-    elseif($perc < $wl) {
+	elseif($perc < $wl) {
         $return = '<div class="progress progress-striped active"><div class="bar bar-warning" style="width: ' . $width . '%;">' . $perc . '%</div></div>';
     }
-    elseif($perc < $dl) {
-        $return = '<div class="progress progress-striped active"><div class="bar bar-danger" style="width: ' . $width . '%;">' . $perc . '%</div></div>';
+	else { 
+        $return = '<div class="progress progress-striped active"><div class="bar bar-success" style="width: ' . $width . '%;">' . $perc . '%</div></div>';
     }
     return $return;
     
