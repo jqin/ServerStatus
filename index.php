@@ -29,38 +29,43 @@ $sTable ='
 			</thead>
 			<tbody>';
 foreach($servers as $result) {
-	$sJavascript .= '$.getJSON("pull/index.php?url='.$id.'",function(result){
-	$("#online'.$id.'").html(result.online);
-	$("#uptime'.$id.'").html(result.uptime);
-	$("#load'.$id.'").html(result.load);
-	$("#memory'.$id.'").html(result.memory);
-	$("#hdd'.$id.'").html(result.hdd);
-	});';
-	$sTable .= '
-		<tr>
-			<td id="online'.$id.'">
-				<div class="progress">
-					<div class="bar bar-danger" style="width: 100%;"><small>Down</small></div>
-				</div>
-			</td>
-			<td><a href="outages.php?name='.$result["name"].'">'.$result["name"].'</td>
-			<td><a href="outages.php?host='.$result["host"].'">'.$result["host"].'</td>
-			<td>'.$result["type"].'</td>
-			<td>'.$result["location"].'</td>
-			<td id="uptime'.$id.'">n/a</td>
-			<td id="load'.$id.'">n/a</td>
-			<td id="memory'.$id.'">
-				<div class="progress progress-striped active">
-					<div class="bar bar-danger" style="width: 100%;"><small>n/a</small></div>
-				</div>
-			</td>
-			<td id="hdd'.$id.'">
-				<div class="progress progress-striped active">
-					<div class="bar bar-danger" style="width: 100%;"><small>n/a</small></div>
-				</div>
-			</td>
-		</tr>
-	';
+	if(isset($result['break'])) {
+		$sTable .= '<tr><td id="null" colspan="9" style="text-align:center;font-size:150%;">' . $result['name'] . '</td><tr><br />';
+	}
+	else {
+		$sJavascript .= '$.getJSON("pull/index.php?url='.$id.'",function(result){
+		$("#online'.$id.'").html(result.online);
+		$("#uptime'.$id.'").html(result.uptime);
+		$("#load'.$id.'").html(result.load);
+		$("#memory'.$id.'").html(result.memory);
+		$("#hdd'.$id.'").html(result.hdd);
+		});';
+		$sTable .= '
+			<tr>
+				<td id="online'.$id.'">
+					<div class="progress">
+						<div class="bar bar-danger" style="width: 100%;"><small>Down</small></div>
+					</div>
+				</td>
+				<td><a href="outages.php?name='.$result["name"].'">'.$result["name"].'</td>
+				<td><a href="outages.php?host='.$result["host"].'">'.$result["host"].'</td>
+				<td>'.$result["type"].'</td>
+				<td>'.$result["location"].'</td>
+				<td id="uptime'.$id.'">n/a</td>
+				<td id="load'.$id.'">n/a</td>
+				<td id="memory'.$id.'">
+					<div class="progress progress-striped active">
+						<div class="bar bar-danger" style="width: 100%;"><small>n/a</small></div>
+					</div>
+				</td>
+				<td id="hdd'.$id.'">
+					<div class="progress progress-striped active">
+						<div class="bar bar-danger" style="width: 100%;"><small>n/a</small></div>
+					</div>
+				</td>
+			</tr>
+		';
+	}
 	$id++;
 }
 $sTable .= '</tbody>';
