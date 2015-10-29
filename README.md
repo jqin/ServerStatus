@@ -72,6 +72,8 @@ https://www.qwdsa.com/c/threads/serverstatus-rebuild.43
 
 https://git.enjen.net/Munzy/ServerStatus
 
+https://github.com/Munroenet/ServerStatus
+
 -----------------------------------------------
 
             Utils
@@ -98,3 +100,17 @@ Safari
 Firefox
 
 Internet Explorer 11
+
+
+-----------------------------------------------
+
+            Based on!
+            
+-----------------------------------------------
+
+https://github.com/mojeda/ServerStatus
+
+-and-
+
+http://www.lowendtalk.com/discussion/comment/169690#Comment_169690
+
