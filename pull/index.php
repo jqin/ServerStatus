@@ -28,6 +28,9 @@ if(!isset($_GET['url']) || !is_numeric($_GET['url']) || !isset($servers[$_GET['u
 // ================================================================================================================
 //													Core!
 // ================================================================================================================
+elseif(isset($servers[$_GET['url']]['break'])) {
+	exit("null");
+}
 elseif(is_numeric($_GET['url'])){
 	$id = $_GET['url']; //make nice IDs
 	$data = get_cache($id, $cache, $time);
