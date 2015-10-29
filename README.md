@@ -1,33 +1,100 @@
-Help
-============
-https://www.qwdsa.com/converse/threads/serverstatus-rebuild.43
+-----------------------------------------------
 
-ServerStatus
-============
+                ServerStatus Rebild
+                By Munzy
+                
 
-ServerStatus is based off [BlueVM's](http://uptime.bluevm.com/) Uptime Checker script, [original download and information](http://www.lowendtalk.com/discussion/comment/169690#Comment_169690).
 
-It uses Bootstrap for theming and progress bars.
+![Screenshot](https://www.cameronmunroe.com/u/2015-10-29_11-30-11.png)
 
-You can currently see Load, RAM (free), HDD (free) statistics, and if it is online or not.
+-----------------------------------------------
 
-Screenshot
-============
-![Screenshot](http://www.cameronmunroe.com/u/2014-08-16_10-04-40.png)
-![Screenshot](http://www.mojeda.com/wp/wp-content/2013/04/serverupbigthemes.png)
-![Mobile Screenshot](http://www.mojeda.com/wp/wp-content/2013/04/serverupthemes.png)
+                Requirements
+                
+-----------------------------------------------
 
-Installation
-============
+Server: 
 
-https://www.qwdsa.com/converse/threads/serverstatus-rebuild.43
+php5
 
-Requirements
-============
+php5-json
 
-**Remote Servers**:
-* PHP5 (With Server Support -S) 
+apache / nginx / etc.
 
-**Master Server**:
-* PHP5
-* Web Server (lighttpd, apache2, nginx, etc.)
+
+
+Client:
+
+php5 (with -S server support)
+
+php5-json
+
+-or-
+
+php5
+
+php5-json
+
+apache / nginx / etc.
+
+
+-or-
+
+bash 
+
+apache / nginx / etc.
+
+
+https://www.qwdsa.com/converse/threads/serverstatus-bash-uptime-php-alternative.55/
+
+-or-
+
+perl
+
+apache / nginx / etc.
+
+https://www.qwdsa.com/converse/threads/serverstatus-perl-uptime-php-alternative.56/
+
+
+-----------------------------------------------
+
+    Installation & Guides
+            
+-----------------------------------------------
+
+https://www.qwdsa.com/c/threads/serverstatus-rebuild.43
+
+-----------------------------------------------
+
+            Main reps
+            
+-----------------------------------------------
+
+https://git.enjen.net/Munzy/ServerStatus
+
+-----------------------------------------------
+
+            Utils
+            
+-----------------------------------------------
+
+https://git.enjen.net/Munzy/ServerStatus-Utils
+
+
+-----------------------------------------------
+
+            Supports (tested)
+            
+-----------------------------------------------
+
+iOS Safari / Puffin / Chrome
+
+Andrioid Chrome
+
+Chrome 
+
+Safari
+
+Firefox
+
+Internet Explorer 11
