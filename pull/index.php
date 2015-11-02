@@ -37,6 +37,9 @@ elseif(is_numeric($_GET['url'])){
 	if($data['uptime'] == null) {
 		$data = get_data($servers[$id]['url']);
 		$data['time'] = $time;
+		if($no_stripe == 1 || !isset($no_stripe)) {
+			$data = no_stripe($data);
+		}
 		cache($id, $data);
 	}
 	if(!isset($data['uptime'])) {
@@ -192,3 +195,12 @@ function get_data($url) {
 	}
   return $data;
 }
+
+// turns off animations to improve performance on clients
+function no_stripe($data) {
+	$data['memory'] = str_replace("progress-striped", '',$data['memory']);
+	$data['hdd'] = str_replace("progress-striped", '',$data['hdd']);
+	
+	return $data;
+}
+

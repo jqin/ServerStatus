@@ -22,4 +22,5 @@ $rtype = 'free'; // this is at the bottom of the page  and will tell your users 
 $mailme = 1; // anything other then 1 will make it not send emails to you!
 $emailto = '@gmail.com'; // where should we send down and up alerts?
 $emailfrom = 'serverstatus@'; // where will we send the emails from?
+$no_stripe = 1; // Turns off the stripe animation to improve performance
 ?>
