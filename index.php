@@ -30,7 +30,7 @@ $sTable ='
 			<tbody>';
 foreach($servers as $result) {
 	if(isset($result['break'])) {
-		$sTable .= '<tr><td id="null" colspan="9" style="text-align:center;font-size:150%;">' . $result['name'] . '</td><tr>';
+		$sTable .= '<tr><td id="null" colspan="9" style="text-align:center;font-size:150%;">' . $result['name'] . '</td></tr>';
 	}
 	else {
 		$sJavascript .= '$.getJSON("pull/index.php?url='.$id.'",function(result){
