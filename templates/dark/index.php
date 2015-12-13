@@ -16,7 +16,7 @@
 	<div class="navbar navbar-fixed-top navbar-inverse">
 	  <div class="navbar-inner">
 	  	<div class="container">
-		    <a class="brand" href="index.php">ServerStatus Live</a><a class="brand" style="float:right;" href="outages.php">
+		    <a class="brand" href="index.php">ServerStatus Live</a><a class="brand" style="float:right;" href="outages.php">Outages</a>
 		</div>
 	  </div>
 	</div>
