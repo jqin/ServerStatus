@@ -1,0 +1,75 @@
+body { background: #ebebeb url('../img/bg.png'); }
+.content { background: #ffffff; padding: 20px; border-radius: 5px; border: 1px #cecece solid; -webkit-box-shadow: 0 1px 10px rgba(0, 0, 0, .1); -moz-box-shadow: 0 1px 10px rgba(0, 0, 0, .1); box-shadow: 0 1px 10px rgba(0, 0, 0, .1); margin-bottom: 20px; }
+.table { background: #ffffff; margin-bottom: 0; border-collapse: collapse; border-radius: 3px; }
+.table th, .table td { text-align: center; }
+.progress { margin-bottom: 0; }
+#ram, #hdd { min-width: 35px; max-width: 100px; }
+@media only screen and (max-width: 768px) {
+	#host, tr td:nth-child(4)			{ display:none; visibility:hidden; }
+	#location, tr td:nth-child(5)		{ display:none; visibility:hidden; }
+}
+@media only screen and (max-width: 420px) {
+	#type, tr td:nth-child(3)			{ display:none; visibility:hidden; }
+	#host, tr td:nth-child(4)			{ display:none; visibility:hidden; }
+	#location, tr td:nth-child(5)		{ display:none; visibility:hidden; }
+}
+@media only screen and (max-width: 320px) {
+	body						{ font-size: 10px; }
+	.content 					{ padding: 0; }
+	#name, tr td:nth-child(2)			{ min-width: 10px; max-width: 25px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+	#type, tr td:nth-child(3)			{ display:none; visibility:hidden; }
+	#host, tr td:nth-child(4)			{ display:none; visibility:hidden; }
+	#location, tr td:nth-child(5)		{ display:none; visibility:hidden; }
+	#uptime, tr td:nth-child(6)			{ display:none; visibility:hidden; }
+}
+.bar {
+  float: left;
+  width: 0;
+  height: 100%;
+  font-size: 12px;
+  line-height: 20px;
+  color: #fff;
+  text-align: center;
+  background-color: #337ab7;
+  -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .15);
+          box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .15);
+  -webkit-transition: width .6s ease;
+       -o-transition: width .6s ease;
+          transition: width .6s ease;
+}
+.bar-success {
+  background-color: #5cb85c;
+}
+.progress-striped .bar-success {
+  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+  background-image:      -o-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+  background-image:         linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+}
+.bar-info {
+  background-color: #5bc0de;
+}
+.progress-striped .bar-info {
+  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+  background-image:      -o-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+  background-image:         linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+}
+.bar-warning {
+  background-color: #f0ad4e;
+}
+.progress-striped .bar-warning {
+  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+  background-image:      -o-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+  background-image:         linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+}
+.bar-danger {
+  background-color: #d9534f;
+}
+.progress-striped .bar-danger {
+  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+  background-image:      -o-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+  background-image:         linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+}
+.special-header {
+	border-bottom:1px solid #ebebeb;
+	background-color: white;
+}
