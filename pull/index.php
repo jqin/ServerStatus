@@ -35,12 +35,16 @@ elseif(is_numeric($_GET['url'])){
 	$id = $_GET['url']; //make nice IDs
 	$data = get_cache($id, $cache, $time);
 	if($data['uptime'] == null) {
+		header("serverstatus_cache: 0");
 		$data = get_data($servers[$id]['url']);
 		$data['time'] = $time;
 		if($no_stripe == 1 || !isset($no_stripe)) {
 			$data = no_stripe($data);
 		}
 		cache($id, $data);
+	}
+	else {
+		header("serverstatus_cache: 1");
 	}
 	if(!isset($data['uptime'])) {
 		// The server is down
@@ -67,7 +71,7 @@ function checkload($load, $emailto, $emailfrom, $server, $id, $mailme, $time) {
 	if(isset($load) && $mailme == 1 && isset($server['maxload'])){
 		if($server['maxload'] <= $load && !file_exists($path)) {
 			$message = "Node: " . $server['name']  . " on host " . $server['host'] . " has an alarming load of " . $load . " at " . date("H:i | d M Y", $time);
-			$message = wordwrap($message, 70, "\r\n");
+			//$message = wordwrap($message, 70, "\r\n");
 			mail($emailto, "ServerStatus: " . $server['name'] . " has an alarming load!", $message, 'From: ServerStatus <' . $emailfrom . '>' . "\r\n");
 			file_put_contents($path, json_encode(array('load' => $load, 'time' => $time, 'name' => $server['name'])));
 		}
@@ -76,7 +80,7 @@ function checkload($load, $emailto, $emailfrom, $server, $id, $mailme, $time) {
 			unlink($path);
 			if($data['name'] == $server['name']) {
 				$message = "Node: " . $server['name']  . " on host " . $server['host'] . " has returned to a normal load at " . date("H:i | d M Y", $time) . ". It was in a critical load for " . number_format((($time - $data['time']) / 60), 0, '.', '') . " Minutes." ;
-				$message = wordwrap($message, 70, "\r\n");
+				//$message = wordwrap($message, 70, "\r\n");
 				mail($emailto, "ServerStatus: " . $server['name'] . " load has returned to normal!", $message, 'From: ServerStatus <' . $emailfrom . '>' . "\r\n");
 			}
 		}
@@ -96,7 +100,7 @@ function checkdown($id, $mailme, $emailto, $emailfrom, $time, $failafter, $serve
 			$oldfails = json_decode(file_get_contents("../cache/outages.db"), true);
 			if($mailme == 1) {
 				$message = "Node: " . $server['name']  . " on host " . $server['host'] . " is up as of: " .  date("H:i | d M Y", $time) . ". It was down for: " . number_format((($time - $data['time']) / 60), 0, '.', '') . " Minutes.";
-				$message = wordwrap($message, 70, "\r\n");
+				//$message = wordwrap($message, 70, "\r\n");
 				mail($emailto, "ServerStatus: " . $server['name'] . " is up!", $message, 'From: ServerStatus <' . $emailfrom . '>' . "\r\n");
 				}
 			foreach($oldfails as $fail) {
@@ -119,7 +123,7 @@ function downfile($id, $server, $failafter, $mailme, $emailto, $emailfrom, $time
 		$down = json_decode(file_get_contents($path), true);
 		if(($down['time'] + $failafter) <= $time && !isset($down['mailed']) && $mailme == 1  && $down['time'] != null) {
 			$message = "Node: " . $server['name']  . " on host " . $server['host'] . " is down as of: " .  date("H:i | d M Y", $down['time']) . ". It has currently been down for " . $failafter . " seconds.";
-			$message = wordwrap($message, 70, "\r\n");
+			//$message = wordwrap($message, 70, "\r\n");
 			mail($emailto, "ServerStatus: " . $server['name'] . " is down!", $message, 'From: ServerStatus <' . $emailfrom . '>' . "\r\n");
 			$down['mailed'] = 'yes';
 			file_put_contents($path, json_encode($down));
@@ -150,30 +154,55 @@ function downinfo() {
 
 // This gets data from our cache 
 function get_cache($id, $cache, $time){
-	$path = '../cache/' . $id . '.raw';
-	if(!file_exists($path)) {
-		return;
+	if(extension_loaded('apc') && ini_get('apc.enabled')){
+		$hashpath = md5($_SERVER['SERVER_NAME'] . $_SERVER['DOCUMENT_ROOT'] . $id);
+		if(apc_exists($hashpath)){
+			$data = json_decode(apc_fetch($hashpath), true);
+			if(($data['time'] + $cache) < $time){
+				return;
+			}
+			else {
+				return $data;
+			}
+		}
+		else {
+			return;
+		}
 	}
 	else {
-		$data = json_decode(file_get_contents($path), true);
-	}
-	if(($data['time'] + $cache) < $time){
-		unlink($path);
-		return;
-	}
-	else {
-		return $data;
+		$path = '../cache/' . $id . '.raw';
+		if(!file_exists($path)) {
+			return;
+		}
+		else {
+			$data = json_decode(file_get_contents($path), true);
+		}
+		if(($data['time'] + $cache) < $time){
+			unlink($path);
+			return;
+		}
+		else {
+			return $data;
+		}
 	}
 }
 
 // This puts data into a cache
 function cache($id, $data) {
-	$path = '../cache/' . $id . '.raw';
-	if(isset($data['uptime'])) {
-		file_put_contents($path, json_encode($data));
+	if(extension_loaded('apc') && ini_get('apc.enabled')){
+		$hashpath = md5($_SERVER['SERVER_NAME'] . $_SERVER['DOCUMENT_ROOT'] . $id);
+		if(isset($data['uptime'])) {
+			apc_store($hashpath, json_encode($data), 360);
+		}
 	}
-	elseif(file_exists($path)) {
-		unlink($path);
+	else {
+		$path = '../cache/' . $id . '.raw';
+		if(isset($data['uptime'])) {
+			file_put_contents($path, json_encode($data));
+		}
+		elseif(file_exists($path)) {
+			unlink($path);
+		}
 	}
 }
 
@@ -196,7 +225,6 @@ function get_data($url) {
   return $data;
 }
 
-// turns off animations to improve performance on clients
 function no_stripe($data) {
 	$data['memory'] = str_replace("progress-striped", '',$data['memory']);
 	$data['hdd'] = str_replace("progress-striped", '',$data['hdd']);
