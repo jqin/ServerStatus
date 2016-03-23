@@ -1,17 +1,11 @@
------------------------------------------------
-
-                ServerStatus Rebild
-                By Munzy
+# ServerStatus Rebild
+# By Munzy
                 
 
 
 ![Screenshot](https://www.cameronmunroe.com/u/2015-10-29_11-30-11.png)
 
------------------------------------------------
-
-                Requirements
-                
------------------------------------------------
+# Requirements
 
 Server: 
 
@@ -20,6 +14,8 @@ php5
 php5-json
 
 apache / nginx / etc.
+
+php-apc (recommended)
 
 
 
@@ -56,38 +52,24 @@ apache / nginx / etc.
 https://www.qwdsa.com/converse/threads/serverstatus-perl-uptime-php-alternative.56/
 
 
------------------------------------------------
 
-    Installation & Guides
-            
------------------------------------------------
+# Installation & Guides
+
 
 https://www.qwdsa.com/c/threads/serverstatus-rebuild.43
 
------------------------------------------------
-
-            Main reps
-            
------------------------------------------------
+# Main Repos
 
 https://git.enjen.net/Munzy/ServerStatus
 
 https://github.com/Munroenet/ServerStatus
 
------------------------------------------------
-
-            Utils
-            
------------------------------------------------
+# Utils
 
 https://git.enjen.net/Munzy/ServerStatus-Utils
 
 
------------------------------------------------
-
-            Supports (tested)
-            
------------------------------------------------
+# Supported Clients (tested)
 
 iOS Safari / Puffin / Chrome
 
@@ -102,11 +84,7 @@ Firefox
 Internet Explorer 11
 
 
------------------------------------------------
-
-            Based on!
-            
------------------------------------------------
+# Based On
 
 https://github.com/mojeda/ServerStatus
 
