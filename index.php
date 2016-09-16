@@ -25,6 +25,8 @@ $sTable ='
 				<th id="load">Load</th>
 				<th id="ram">RAM</th>
 				<th id="hdd">HDD</th>
+				<th id="rx">Rx &darr;</th>
+				<th id="tx">Tx &uarr;</th>
 			</tr>
 			</thead>
 			<tbody>';
@@ -39,6 +41,8 @@ foreach($servers as $result) {
 		$("#load'.$id.'").html(result.load);
 		$("#memory'.$id.'").html(result.memory);
 		$("#hdd'.$id.'").html(result.hdd);
+		$("#net_rx'.$id.'").html(result.net_rx);
+		$("#net_tx'.$id.'").html(result.net_tx);
 		});';
 		$sTable .= '
 			<tr>
@@ -63,6 +67,8 @@ foreach($servers as $result) {
 						<div class="bar bar-danger" style="width: 100%;"><small>n/a</small></div>
 					</div>
 				</td>
+			        <td id="net_rx'.$id.'">'.$result['net_rx'].'</td>
+			        <td id="net_tx'.$id.'">'.$result['net_tx'].'</td>
 			</tr>
 		';
 	}

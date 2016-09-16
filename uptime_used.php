@@ -35,6 +35,7 @@ $loadtime = 0; // the settings are:
 //  1 for 5  minute average
 //  2 for 15 minute average
 
+$netinterface = "eth0";
 // ========================================================================================================================================
 //                                                                  Getting Data!
 // ========================================================================================================================================
@@ -51,6 +52,14 @@ $internal['memraw'] = file_get_contents($memloc);
 $internal['hddtotal'] = disk_total_space($fileloc);
 $internal['hddfree'] = disk_free_space($fileloc);
 $internal['load'] = sys_getloadavg();
+
+$rx[] = @file_get_contents("/sys/class/net/$netinterface/statistics/rx_bytes");
+$tx[] = @file_get_contents("/sys/class/net/$netinterface/statistics/tx_bytes");
+sleep(1);
+$rx[] = @file_get_contents("/sys/class/net/$netinterface/statistics/rx_bytes");
+$tx[] = @file_get_contents("/sys/class/net/$netinterface/statistics/tx_bytes");
+$internal['tbps'] = $tx[1] - $tx[0];
+$internal['rbps'] = $rx[1] - $rx[0];
 
 // ========================================================================================================================================
 //                                                              Process The Data!
@@ -82,6 +91,13 @@ $post['hdd'] = levels($internal['hddperc'], $dl, $wl); // adding hdd to the post
 // load 
 $post['load'] = $internal['load'][$loadtime]; // posting load avg.
 // load done
+
+// network
+$tbps = $tx[1] - $tx[0];
+$rbps = $rx[1] - $rx[0];
+$post['net_rx'] = sprintf('%0.2f', round($rbps/1024, 2));
+$post['net_tx'] = sprintf('%0.2f', round($tbps/1024, 2));
+// network done
 
 // Are we online?
 $post['online'] = '<div class="progress"><div class="bar bar-success" style="width: 100%;"><small>Up</small></div></div>';
